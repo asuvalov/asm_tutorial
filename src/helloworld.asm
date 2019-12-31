@@ -11,3 +11,7 @@ _start:
     mov     eax, 4      ; SYS_WRITE
     int     80h         ; interrupt
 
+    mov     ebx, 0      ; return value
+    mov     eax, 1      ; SYS_EXIT
+    int     80h
+
