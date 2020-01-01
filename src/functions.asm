@@ -1,6 +1,9 @@
+global printstr
+global _strlen
+
 ;---------------------------------
-; int strlen(string msg)
-strlen:
+; int _strlen(string msg)
+_strlen:
     push    ebx
     mov     ebx, eax
 
@@ -23,7 +26,7 @@ printstr:
     push    ebx
     push    eax
     
-    call    strlen
+    call    _strlen
     
     mov     edx, eax
     pop     eax
