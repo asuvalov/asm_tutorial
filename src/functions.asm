@@ -1,5 +1,6 @@
 global printstr
 global _strlen
+global printstrLF
 
 ;---------------------------------
 ; int _strlen(string msg)
@@ -39,6 +40,23 @@ printstr:
     pop     ebx
     pop     ecx
     pop     edx
+    ret
+
+;--------------------------------
+; void printstrLF(string msg)
+; print string with line feed
+printstrLF:
+    call    printstr
+    
+    push    eax
+    mov     eax, 0Ah
+    push    eax
+    mov     eax, esp
+    
+    call    printstr
+    
+    pop     eax
+    pop     eax
     ret
 
 ;--------------------------------
