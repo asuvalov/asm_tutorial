@@ -43,6 +43,41 @@ printstr:
     ret
 
 ;--------------------------------
+; void printint(int number)
+printint:
+    push    eax
+    push    ecx
+    push    edx
+    push    esi
+
+    mov     esi, 10
+    mov     ecx, 0
+
+divideLoop:
+    inc     ecx
+    mov     edx, 0
+    idiv    esi
+    add     edx, 48
+    push    edx
+    cmp     eax, 0
+    jnz     divideLoop 
+    
+
+printLoop:
+    dec     ecx
+    mov     eax, esp
+    call    printstr
+    pop     eax
+    cmp     ecx, 0
+    jnz     printLoop    
+
+    pop     esi
+    pop     edx
+    pop     ecx
+    pop     eax
+    ret
+
+;--------------------------------
 ; void printstrLF(string msg)
 ; print string with line feed
 printstrLF:
@@ -55,6 +90,21 @@ printstrLF:
     
     call    printstr
     
+    pop     eax
+    pop     eax
+    ret
+
+;--------------------------------
+; void printintLF(int number)
+; print number with line feed
+printintLF:
+    call    printint
+    
+    push    eax
+    mov     eax, 0Ah
+    push    eax
+    mov     eax, esp
+    call    printstr
     pop     eax
     pop     eax
     ret
