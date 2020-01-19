@@ -2,50 +2,82 @@
 #include <string.h>
 #include "string.hpp"
 
-//extern "C" void printstr(const char*);
-//extern "C" void printstrLF(const char*);
-//extern "C"  int _strlen(const char*);
-//extern "C"  int printstrLF2(const char*, const char*);
-
-extern "C" int   _add_(int,int);
-
-int main()
+int test_memcpy()
 {
-    //char msg[] = "Hello world";
-    // printf("string '%s' length - %d \n", msg, _strlen(msg));
-    //printstrLF2(msg, msg);
-    //printf("ret - %d \n", _add_(1,2));
-    
     const char* source = "Hello world";
     char destination[20];
     char* rev = (char*)_memcpy_(destination, source, 12);
-    printf("%s\n", destination);
-    printf("%s\n", rev);
+    
+    int cmp = memcmp(destination, source, 12);
+    if (cmp != 0)
+        return 1;
+        
+    return 0;
+}
 
+int test_memcmp()
+{
     char a1[] = {'a', 'b', 'c', '\0'};
-    char a2[] = {'a', 'b', 'd'};
+    char a2[] = {'a', 'b', 'd', '\0'};
 
     int cmp_result = _memcmp_(a1, a2, 3);
     int expected_result = memcmp(a1, a2, 3);
-    printf("%d %d\n", cmp_result, expected_result);
+    if (cmp_result != expected_result)
+        return 1;
 
-    cmp_result = _memcmp_(a2, a1, 3);
+    cmp_result = _memcmp_(a2, a1, 3);  
     expected_result = memcmp(a2, a1, 3);
-    printf("%d %d\n", cmp_result, expected_result);
+    if (cmp_result != expected_result)
+        return 1;
 
     cmp_result = _memcmp_(a1, a2, 2);
     expected_result = memcmp(a1, a2, 2);
-    printf("%d %d\n", cmp_result, expected_result);
+    if (cmp_result != expected_result)
+        return 1;
 
-    char* str = (char*)"00000";
-    
-    char a3[] = {'0', '0', '0', '0', '0', '\0'};
-    printf("%s\n", a3);
+    return 0;
+}
 
-    char* res = (char*)_memset_(a3, '1', 5);
-    printf("%s\n", a3);    
-    printf("%s\n", res);
+int test_memset()
+{
+    char a1[] = {'0', '0', '0', '0', '0', '\0'};
+    char a2[] = {'1', '1', '1', '1', '1', '\0'};
+    char* res = (char*)_memset_(a1, '1', 5);
+
+    if (memcmp(a1, a2, 6) != 0)
+        return 1;
+
+    if (memcmp(res, a2, 6) != 0)
+        return 1;
+
+    return 0;    
+}
+
+int main()
+{
+    int errors = 0;
+
+    if (test_memcpy() != 0) {
+        printf("Test memcpy failed\n");
+        ++errors;
+    }
+              
+    if (test_memcmp() != 0) {
+        printf("Test memcmp failed\n");
+        ++errors; 
+    }
+       
+    if (test_memset() != 0) {
+        printf("Test memset failed\n");
+        ++errors;
+    }
     
+    if (errors != 0) {
+        printf("%d tests failed\n", errors);
+        return 1;
+    }
+        
+    printf("Tests passed\n");
     return 0;
 }
 
