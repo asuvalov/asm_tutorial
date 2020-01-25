@@ -7,11 +7,11 @@ int test_memcpy()
     const char* source = "Hello world";
     char destination[20];
     char* rev = (char*)_memcpy_(destination, source, 12);
-    
+
     int cmp = memcmp(destination, source, 12);
     if (cmp != 0)
         return 1;
-        
+
     return 0;
 }
 
@@ -50,33 +50,74 @@ int test_memset()
     if (memcmp(res, a2, 6) != 0)
         return 1;
 
-    return 0;    
+    return 0;
 }
+
+int test_memchr()
+{
+    const char* str = "hello world";
+
+    if (_memchr_(str, 'w', 12) != str+6)
+        return 1;
+
+    if (_memchr_(str, 'o', 5) != str+4)
+        return 1;
+
+    if (_memchr_(str, 'h', 12) != str)
+        return 1; 
+
+    if (_memchr_(str, 'x', 12) != 0)
+        return 1; 
+
+    return 0;
+}
+
+int test_strlen()
+{
+    if (_strlen_("hello world") != 11)
+        return 1;
+
+    if (_strlen_("") != 0)
+        return 1;
+
+    return 0;
+}
+
+int test_strcpy()
+{
+    char arr1[] = {'a', 'b', 'c', 'd', '\0'};
+    char arr2[5];
+    _strcpy_(arr2, arr1);
+
+    for (size_t i = 0; i < 5; ++i)
+        if (arr1[i] != arr2[i])
+            return 1;
+
+    return 0;
+}
+
+#define TEST_FUNCTION(func) if (test_##func() != 0) { \
+                                printf("Test %s failed \n", #func); \
+                                ++errors; \
+                            }
 
 int main()
 {
-    int errors = 0;
+    static int errors = 0;
 
-    if (test_memcpy() != 0) {
-        printf("Test memcpy failed\n");
-        ++errors;
-    }
-              
-    if (test_memcmp() != 0) {
-        printf("Test memcmp failed\n");
-        ++errors; 
-    }
-       
-    if (test_memset() != 0) {
-        printf("Test memset failed\n");
-        ++errors;
-    }
-    
+    TEST_FUNCTION(memcpy);
+    TEST_FUNCTION(memcmp);
+    TEST_FUNCTION(memset);
+    TEST_FUNCTION(memchr);
+
+    TEST_FUNCTION(strlen);
+    TEST_FUNCTION(strcpy);
+
     if (errors != 0) {
         printf("%d tests failed\n", errors);
         return 1;
     }
-        
+
     printf("Tests passed\n");
     return 0;
 }
