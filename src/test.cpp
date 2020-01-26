@@ -96,6 +96,38 @@ int test_strcpy()
     return 0;
 }
 
+int test_strcmp()
+{
+    if (_strcmp_("abc", "abc") != 0)
+        return 1;
+    if (_strcmp_("abc", "abd") != -1)
+        return 1;
+    if (_strcmp_("abc", "abb") != 1)
+        return 1;
+    return 0;
+}
+
+int test_strcat()
+{
+    char arr[64] = {0};
+    char* res = _strcat_(arr, "string1");
+    if (_strcmp_(arr, "string1") != 0)
+        return 1;
+
+    res = _strcat_(arr, " ");
+    if (_strcmp_(arr, "string1 ") != 0)
+        return 1;
+
+    res = _strcat_(arr, "string2");
+    if (_strcmp_(arr, "string1 string2") != 0)
+        return 1;
+
+    if (arr != res)
+        return 1;
+
+    return 0;
+}
+
 #define TEST_FUNCTION(func) if (test_##func() != 0) { \
                                 printf("Test %s failed \n", #func); \
                                 ++errors; \
@@ -112,6 +144,8 @@ int main()
 
     TEST_FUNCTION(strlen);
     TEST_FUNCTION(strcpy);
+    TEST_FUNCTION(strcmp);
+    TEST_FUNCTION(strcat);
 
     if (errors != 0) {
         printf("%d tests failed\n", errors);

@@ -8,6 +8,8 @@ extern "C" void* _memchr_ (const void* ptr, int value, size_t num           );
 
 extern "C" int   _strlen_ (const char* str                                  );
 extern "C" char* _strcpy_ (char* destination, const char* source            );
+extern "C" int   _strcmp_ (const char* str1, const char* str2               );
+extern "C" char* _strcat_ (char* destination, const char* source            );
 
 #endif
 

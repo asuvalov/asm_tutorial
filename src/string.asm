@@ -7,6 +7,8 @@ global _memchr_
 
 global _strlen_
 global _strcpy_
+global _strcmp_
+global _strcat_
 
 ;---------------------------------------------------------------------
 ; Copy memory from source to destination num bytes
@@ -137,7 +139,9 @@ _memchr_:
 ; int _strlen_(const char* str)
 ;---------------------------------------------------------------------
 _strlen_:
-    mov eax, [esp+4]
+    push ebp
+    mov ebp, esp
+    mov eax, [ebp+0x8]
 
 .nextchar:
     cmp byte [eax], 0
@@ -146,21 +150,25 @@ _strlen_:
     jmp .nextchar
 
 .finished:
-    sub eax, [esp+4]
+    sub eax, [ebp+0x8]
+    pop ebp
     ret
 ;-----------------------------------------------------------------------------
 ; Copies the C string pointed by source into the array pointed by destination
 ; char* _strcpy_(char* destination, const char* source)
 ;-----------------------------------------------------------------------------
 _strcpy_:
+    push ebp
+    mov ebp, esp    
+
     push edi
     push esi
     push ebx
 
     xor ebx, ebx
 
-    mov edi, [esp+16]
-    mov esi, [esp+20]
+    mov edi, [ebp+0x8]
+    mov esi, [ebp+0xc]
 
 .copy:
     cmp byte [esi], 0
@@ -174,14 +182,84 @@ _strcpy_:
 
 .finished:
     mov byte [edi], 0
-    mov eax, [esp+16]
+    mov eax, [ebp+0x8]
+    pop ebx
     pop esi
     pop edi
-    pop ebx
+    pop ebp
     ret
 ;-----------------------------------------------------------------------------
-
+; Compares the C string str1 to the C string str2.
+; Return: 1 if str1 > str2, -1 if str1 < str2, 0 if str1 = str2
+; int _strcmp_ (const char* str1, const char* str2)
 ;-----------------------------------------------------------------------------
+_strcmp_:
+    push edi
+    push esi
+    push ebx
+
+    xor ebx, ebx
+
+    mov esi, [esp+16]
+    mov edi, [esp+20]
+
+.compare:
+    mov bl, [esi]
+    cmp bl, [edi]
+    jz .next
+    jl .less
+    jg .greater
+
+.next:
+    cmp bl, 0
+    jz .equal
+    inc esi
+    inc edi
+    jmp .compare
+
+.equal:
+    mov eax, 0
+    jmp .finished
+
+.less:
+    mov eax, -1
+    jmp .finished
+
+.greater:
+    mov eax, 1
+
+.finished:
+    pop ebx
+    pop esi
+    pop edi
+    ret
+;------------------------------------------------------------------------------
+; Appends a copy of the source string to the destination string.
+; Return: the destination string.
+; char* _strcat_ (char* destination, const char* source)
+;------------------------------------------------------------------------------
+_strcat_:
+    push ebp
+    mov ebp, esp
+
+    push dword [ebp+0x8]
+    call _strlen_
+    add esp, 0x4
+
+    push ebx
+    mov ebx, [ebp+0x8]
+    add ebx, eax
+    
+    push dword [ebp+0xc]
+    push ebx 
+    call _strcpy_
+    add esp, 0x8
+    
+    mov eax, [ebp+0x8]
+    pop ebx
+    pop ebp
+    ret
+;------------------------------------------------------------------------------
 _add_:
     mov ecx, [esp+4]
     sub ecx, [esp+8]
